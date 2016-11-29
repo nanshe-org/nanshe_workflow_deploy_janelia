@@ -45,6 +45,7 @@ touch ~/miniconda/conda-meta/pinned
 echo "conda-build ==1.16.0" > ~/miniconda/conda-meta/pinned
 
 # Add channels.
+conda config --add channels conda-forge
 conda config --add channels nanshe
 
 # Update, install some needed tools, and cleanup.
