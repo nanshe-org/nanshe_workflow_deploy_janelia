@@ -37,8 +37,7 @@ bash ~/miniconda.sh -b -p ~/miniconda
 rm -f ~/miniconda.sh
 
 # Fix up the environment.
-export PATH="~/miniconda/bin:${PATH}"
-source activate root
+source ~/miniconda/bin/activate root
 
 # Pin packages that need pinning.
 touch ~/miniconda/conda-meta/pinned
