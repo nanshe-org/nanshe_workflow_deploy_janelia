@@ -40,8 +40,9 @@ rm -f ~/miniconda.sh
 source ~/miniconda/bin/activate root
 
 # Pin packages that need pinning.
+rm -f ~/miniconda/conda-meta/pinned
 touch ~/miniconda/conda-meta/pinned
-echo "conda-build ==1.16.0" > ~/miniconda/conda-meta/pinned
+echo "conda-build 1.*" >> ~/miniconda/conda-meta/pinned
 
 # Add channels.
 conda config --add channels conda-forge
