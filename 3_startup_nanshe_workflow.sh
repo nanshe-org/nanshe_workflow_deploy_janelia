@@ -30,6 +30,13 @@
 # OF SUCH DAMAGE.
 
 
+# Unset XDG_RUNTIME_DIR as we lose write permission to this directory in `qsub`
+# and Jupyter wants to be able to write some files there if it is set.
+#
+# xref: https://github.com/jupyter/notebook/issues/1923
+#
+unset XDG_RUNTIME_DIR
+
 # Remove the config variables file at the beginning and the end.
 rm -f ~/ipython_notebook_config_vars
 trap "rm -f ~/ipython_notebook_config_vars" EXIT
