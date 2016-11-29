@@ -33,6 +33,9 @@
 # Exit immediately at any failure.
 set -e
 
+# Fix up the environment.
+source ~/miniconda/bin/activate nanshenv
+
 # Go into the workflow repo. Creating it, if it doesn't exist.
 if ! $(test -d ~/nanshe_workflow);
 then
