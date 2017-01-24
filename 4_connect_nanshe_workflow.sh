@@ -44,4 +44,3 @@ eval "${IPYTHON_CONFIG}"
 set +x
 unset IPYTHON_CONFIG
 ssh -o ExitOnForwardFailure=yes -vnNTL $LOCAL_IPYTHON_PORT:localhost:$LOGIN_NODE_PORT login1.int.janelia.org
-unset LOCAL_IPYTHON_PORT
