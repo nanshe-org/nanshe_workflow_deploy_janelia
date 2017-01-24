@@ -38,5 +38,10 @@ then
 fi
 
 # Set variables to facilitate the connection.
-export `ssh login1.int.janelia.org 'cat ~/ipython_notebook_config_vars'`
-ssh -o ExitOnForwardFailure=yes -vnNTL $LOCAL_IPYTHON_PORT:localhost:$LOGIN_NODE_PORT login1.int.janelia.org 
+IPYTHON_CONFIG="`ssh login1.int.janelia.org 'cat ~/ipython_notebook_config_vars'`"
+set -x
+eval "${IPYTHON_CONFIG}"
+set +x
+unset IPYTHON_CONFIG
+ssh -o ExitOnForwardFailure=yes -vnNTL $LOCAL_IPYTHON_PORT:localhost:$LOGIN_NODE_PORT login1.int.janelia.org
+unset LOCAL_IPYTHON_PORT

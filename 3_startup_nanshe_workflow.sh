@@ -80,13 +80,21 @@ do
   sleep 1
 done
 
-# Gets the iPython Notebook port used.
-IPYTHON_PORT=$(grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g")
-while [ -z "${IPYTHON_PORT}" ] && [ $(qstat -j $QJOB_ID) ];
+# Gets the iPython Notebook port and token.
+IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
+while [ -z "${IPYTHON_INFO}" ] && [ $(qstat -j $QJOB_ID) ];
 do
   sleep 1
-  IPYTHON_PORT=$(grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g")
+  IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
 done
+
+# Extract IPython info
+IPYTHON_PORT="${IPYTHON_INFO[0]}"
+IPYTHON_TOKEN="${IPYTHON_INFO[-1]}"
+if [ "${IPYTHON_PORT}" == "${IPYTHON_TOKEN}" ];
+then
+  unset IPYTHON_TOKEN
+fi
 
 # Get a port if one isn't provided.
 if [[ -z "${LOGIN_NODE_PORT}" ]];
@@ -98,7 +106,7 @@ fi
 while [ true ];
 do
   # Store the iPython config variables when we are ready for the connection. If it fails, up the port number on the login node.
-  echo -e "QJOB_ID=$QJOB_ID\nQJOB_QUEUENAME=$QJOB_QUEUENAME\nQJOB_HOSTNAME=$QJOB_HOSTNAME\nIPYTHON_PORT=$IPYTHON_PORT\nLOGIN_NODE_PORT=$LOGIN_NODE_PORT" > ~/ipython_notebook_config_vars
+  echo -e "QJOB_ID=$QJOB_ID\nQJOB_QUEUENAME=$QJOB_QUEUENAME\nQJOB_HOSTNAME=$QJOB_HOSTNAME\nIPYTHON_PORT=$IPYTHON_PORT\nLOGIN_NODE_PORT=$LOGIN_NODE_PORT\nIPYTHON_TOKEN=$IPYTHON_TOKEN" > ~/ipython_notebook_config_vars
   ssh -o ExitOnForwardFailure=yes -vnNTL $LOGIN_NODE_PORT:localhost:$IPYTHON_PORT $QJOB_HOSTNAME | cat
   [[ $? -eq 0 ]] || break
   ((LOGIN_NODE_PORT++))
