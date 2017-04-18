@@ -57,3 +57,6 @@ git pull --ff
 # Build and install the workflow meta package.
 conda build nanshe_workflow.recipe
 conda install -y --use-local -n nanshenv nanshe_workflow
+
+# Trust the notebook.
+jupyter trust ~/nanshe_workflow/nanshe_ipython.ipynb
