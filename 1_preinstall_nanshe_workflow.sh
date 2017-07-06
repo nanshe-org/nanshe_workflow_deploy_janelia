@@ -103,6 +103,7 @@ echo "# Export LSF variables, if available." >> ~/.nanshe_workflow.sh
 echo "# May not be available when using Linux locally or Windows with Git Bash." >> ~/.nanshe_workflow.sh
 echo "if [[ -f /misc/lsf/conf/profile.lsf ]]; then" >> ~/.nanshe_workflow.sh
 echo "    source /misc/lsf/conf/profile.lsf" >> ~/.nanshe_workflow.sh
+echo "    export LSB_STDOUT_DIRECT='Y'" >> ~/.nanshe_workflow.sh
 echo "    export LSB_JOB_REPORT_MAIL='N'" >> ~/.nanshe_workflow.sh
 echo "fi" >> ~/.nanshe_workflow.sh
 echo "" >> ~/.nanshe_workflow.sh
