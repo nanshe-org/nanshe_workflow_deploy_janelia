@@ -61,20 +61,19 @@ fi
 QJOB_ID=$(cat ~/splaunch_startup_ipython_notebook.out | tr "\"" "\n" | tail -2 | head -1)
 
 # Remove the notebook when the script exits.
-trap "qdel $QJOB_ID" EXIT
+trap "bkill $QJOB_ID" EXIT
 
 # Wait for the job to start.
-while [ "$(qstat | grep "^\s\+$QJOB_ID\s\+" | grep "\s\+r\s\+" | wc -l)" == "0" ];
+while [ "$(bjobs | grep "^\s*$QJOB_ID\s\+" | grep "\s\+RUN\s\+" | wc -l)" == "0" ];
 do
   sleep 1
 done
 
 # Gets the queue that it is running on.
-QJOB_QUEUENAME=`LINE=$(qstat | grep "^\s\+$QJOB_ID\s\+"); VALS=($LINE); echo ${VALS[${#VALS[@]}-2]}`
-QJOB_HOSTNAME=`VALS=(${QJOB_QUEUENAME/@/ }); VALS=${VALS[${#VALS[@]}-1]}; VALS=(${VALS/./ }); echo ${VALS[0]}`
+QJOB_HOSTNAME=`bjobs -UF -X $QJOB_ID | tr ",;" "\n" | grep "on Host" | head -1 | sed 's/.*<\(.*\)>/\1/'`
 
 # Wait for the log file to get some content.
-QJOB_STDERR_PATH=~/$(qstat -j $QJOB_ID | grep stderr_path_list | tr ":" "\n" | tail -1)
+QJOB_STDERR_PATH=~/$(bjobs -UF -X $QJOB_ID | tr ",;" "\n" | grep "Error File" | sed 's/.*<\(.*\)>/\1/')
 until [ -s $QJOB_STDERR_PATH ];
 do
   sleep 1
@@ -82,7 +81,7 @@ done
 
 # Gets the iPython Notebook port and token.
 IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
-while [ -z "${IPYTHON_INFO}" ] && [ $(qstat -j $QJOB_ID) ];
+while [ -z "${IPYTHON_INFO}" ] && [ $(bjobs -X $QJOB_ID | tail -1 | tr -s " " "\n" | head -3 | tail -1 | grep -v "RUN") ];
 do
   sleep 1
   IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
@@ -106,7 +105,7 @@ fi
 while [ true ];
 do
   # Store the iPython config variables when we are ready for the connection. If it fails, up the port number on the login node.
-  echo -e "QJOB_ID=$QJOB_ID\nQJOB_QUEUENAME=$QJOB_QUEUENAME\nQJOB_HOSTNAME=$QJOB_HOSTNAME\nIPYTHON_PORT=$IPYTHON_PORT\nLOGIN_NODE_PORT=$LOGIN_NODE_PORT\nIPYTHON_TOKEN=$IPYTHON_TOKEN" > ~/ipython_notebook_config_vars
+  echo -e "QJOB_ID=$QJOB_ID\nQJOB_HOSTNAME=$QJOB_HOSTNAME\nIPYTHON_PORT=$IPYTHON_PORT\nLOGIN_NODE_PORT=$LOGIN_NODE_PORT\nIPYTHON_TOKEN=$IPYTHON_TOKEN" > ~/ipython_notebook_config_vars
   ssh -o ExitOnForwardFailure=yes -vnNTL $LOGIN_NODE_PORT:localhost:$IPYTHON_PORT $QJOB_HOSTNAME | cat
   [[ $? -eq 0 ]] || break
   ((LOGIN_NODE_PORT++))
