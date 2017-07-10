@@ -72,6 +72,9 @@ echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterEngines.n = int(os.enviro
 rm -f ~/.ipython/profile_sge/ipcluster_config.py
 ~/miniconda/envs/nanshenv/bin/ipython profile create --parallel --profile=sge
 echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterStart.controller_launcher_class = \"SGE\"\nc.IPClusterEngines.engine_launcher_class = \"SGE\"\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '*'\nc.HubFactory.engine_ip = '*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_sge/ipcluster_config.py
+rm -f ~/.ipython/profile_lsf/ipcluster_config.py
+~/miniconda/envs/nanshenv/bin/ipython profile create --parallel --profile=lsf
+echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterStart.controller_launcher_class = \"LSF\"\nc.IPClusterEngines.engine_launcher_class = \"LSF\"\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '*'\nc.HubFactory.engine_ip = '*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_lsf/ipcluster_config.py
 
 # Fix up the bash profile.
 echo "" >> ~/.bash_profile
@@ -94,7 +97,17 @@ echo "# Export Grid Engine and DRMAA variables, if available." >> ~/.nanshe_work
 echo "# May not be available when using Linux locally or Windows with Git Bash." >> ~/.nanshe_workflow.sh
 echo "if [[ -f /sge/current/default/common/settings.sh ]]; then" >> ~/.nanshe_workflow.sh
 echo "    source /sge/current/default/common/settings.sh" >> ~/.nanshe_workflow.sh
-echo "    export DRMAA_LIBRARY_PATH=\$SGE_ROOT/lib/lx-amd64/libdrmaa.so.1.0" >> ~/.nanshe_workflow.sh
+echo "    export SGE_DRMAA_LIBRARY_PATH=\$SGE_ROOT/lib/lx-amd64/libdrmaa.so.1.0" >> ~/.nanshe_workflow.sh
+echo "    export DRMAA_LIBRARY_PATH=\$SGE_DRMAA_LIBRARY_PATH" >> ~/.nanshe_workflow.sh
+echo "fi" >> ~/.nanshe_workflow.sh
+echo "# Export LSF variables, if available." >> ~/.nanshe_workflow.sh
+echo "# May not be available when using Linux locally or Windows with Git Bash." >> ~/.nanshe_workflow.sh
+echo "if [[ -f /misc/lsf/conf/profile.lsf ]]; then" >> ~/.nanshe_workflow.sh
+echo "    source /misc/lsf/conf/profile.lsf" >> ~/.nanshe_workflow.sh
+echo "    export LSB_STDOUT_DIRECT='Y'" >> ~/.nanshe_workflow.sh
+echo "    export LSB_JOB_REPORT_MAIL='N'" >> ~/.nanshe_workflow.sh
+echo "    export LSF_DRMAA_LIBRARY_PATH=/misc/sc/lsf/lib/libdrmaa.so.0.1.1" >> ~/.nanshe_workflow.sh
+echo "    export DRMAA_LIBRARY_PATH=\$LSF_DRMAA_LIBRARY_PATH" >> ~/.nanshe_workflow.sh
 echo "fi" >> ~/.nanshe_workflow.sh
 echo "" >> ~/.nanshe_workflow.sh
 echo "# Set the number of OpenBLAS threads to 1." >> ~/.nanshe_workflow.sh
