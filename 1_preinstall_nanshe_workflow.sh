@@ -32,7 +32,7 @@
 
 # Download and install conda.
 rm -rf ~/miniconda
-curl -L https://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh > ~/miniconda.sh
+curl -L https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh > ~/miniconda.sh
 bash ~/miniconda.sh -b -p ~/miniconda
 rm -f ~/miniconda.sh
 
