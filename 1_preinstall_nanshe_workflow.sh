@@ -60,7 +60,7 @@ conda install -y -n nanshenv nanshe
 
 # Install some other dependencies that will be needed.
 conda install -y -n nanshenv drmaa splauncher
-conda install -y -n nanshenv ipython-notebook
+conda install -y -n nanshenv ipython notebook
 
 # Clean after all installs.
 conda clean -yitps
