@@ -60,3 +60,6 @@ conda install -y --use-local -n nanshenv nanshe_workflow
 
 # Trust the notebook.
 jupyter trust ~/nanshe_workflow/nanshe_ipython.ipynb
+
+# Enable ExecuteTime
+jupyter nbextension enable execute_time/ExecuteTime
