@@ -63,3 +63,4 @@ jupyter trust ~/nanshe_workflow/nanshe_ipython.ipynb
 
 # Enable ExecuteTime
 jupyter nbextension enable execute_time/ExecuteTime
+python -c "from notebook.services.config import ConfigManager as C; C().update('notebook', {'ExecuteTime': {'clear_timings_on_clear_output': True}})"
