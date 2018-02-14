@@ -117,6 +117,12 @@ echo "# we don't find parallelism from the BLAS to be too helpful." >> ~/.nanshe
 echo "# So we ensure that it isn't parallelized." >> ~/.nanshe_workflow.sh
 echo "export OPENBLAS_NUM_THREADS=1" >> ~/.nanshe_workflow.sh
 echo "" >> ~/.nanshe_workflow.sh
+echo "# Set the Jupyter runtime directory in the user's home." >> ~/.nanshe_workflow.sh
+echo "# This simply follows the recommendation of our cluster admins" >> ~/.nanshe_workflow.sh
+echo "# to redirect this to a different location than XDG_RUNTIME_DIR." >> ~/.nanshe_workflow.sh
+echo "# This is just what Jupyter picks when XDG_RUNTIME_DIR is disabled." >> ~/.nanshe_workflow.sh
+echo "export JUPYTER_RUNTIME_DIR=\$HOME/.local/share/jupyter/runtime" >> ~/.nanshe_workflow.sh
+echo "" >> ~/.nanshe_workflow.sh
 echo "# Add miniconda root to the path" >> ~/.nanshe_workflow.sh
 echo "PATH=\$HOME/miniconda/bin:\$PATH" >> ~/.nanshe_workflow.sh
 echo "" >> ~/.nanshe_workflow.sh
