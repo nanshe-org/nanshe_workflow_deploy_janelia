@@ -59,7 +59,7 @@ conda create -y -n nanshenv python
 conda install -y -n nanshenv nanshe
 
 # Install some other dependencies that will be needed.
-conda install -y -n nanshenv drmaa splauncher
+conda install -y -n nanshenv lsf-drmaa drmaa splauncher
 conda install -y -n nanshenv ipython notebook
 
 # Clean after all installs.
@@ -106,7 +106,7 @@ echo "if [[ -f /misc/lsf/conf/profile.lsf ]]; then" >> ~/.nanshe_workflow.sh
 echo "    source /misc/lsf/conf/profile.lsf" >> ~/.nanshe_workflow.sh
 echo "    export LSB_STDOUT_DIRECT='Y'" >> ~/.nanshe_workflow.sh
 echo "    export LSB_JOB_REPORT_MAIL='N'" >> ~/.nanshe_workflow.sh
-echo "    export LSF_DRMAA_LIBRARY_PATH=/misc/sc/lsf/lib/libdrmaa.so.0.1.1" >> ~/.nanshe_workflow.sh
+echo "    export LSF_DRMAA_LIBRARY_PATH=\$HOME/miniconda/envs/nanshenv/lib/libdrmaa.so.0.1.1" >> ~/.nanshe_workflow.sh
 echo "    export DRMAA_LIBRARY_PATH=\$LSF_DRMAA_LIBRARY_PATH" >> ~/.nanshe_workflow.sh
 echo "fi" >> ~/.nanshe_workflow.sh
 echo "" >> ~/.nanshe_workflow.sh
