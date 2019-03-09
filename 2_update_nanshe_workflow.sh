@@ -33,34 +33,8 @@
 # Exit immediately at any failure.
 set -e
 
-# Fix up the environment.
-source ~/miniconda/bin/activate nanshenv
-
-# Go into the workflow repo. Creating it, if it doesn't exist.
-if ! $(test -d ~/nanshe_workflow);
+# Download and convert the Docker image to the Singularity image (if it is missing).
+if ! $(test -f ~/nanshe_workflow.simg);
 then
-  git clone https://github.com/nanshe-org/nanshe_workflow.git ~/nanshe_workflow
+  singularity build ~/nanshe_workflow.simg docker://nanshe/nanshe_workflow
 fi
-cd ~/nanshe_workflow
-
-# Check if the repo is clean. Error if not.
-if [ $(git status --porcelain | wc -l) -gt 0 ];
-then
-  echo "The `nanshe_workflow` repo is dirty. Clean it up before running update."
-  exit 1
-fi
-
-# Update the master branch with the remote
-git checkout master
-git pull --ff
-
-# Build and install the workflow meta package.
-conda build nanshe_workflow.recipe
-conda install -y --use-local -n nanshenv nanshe_workflow
-
-# Trust the notebook.
-jupyter trust ~/nanshe_workflow/nanshe_ipython.ipynb
-
-# Enable ExecuteTime
-jupyter nbextension enable execute_time/ExecuteTime
-python -c "from notebook.services.config import ConfigManager as C; C().update('notebook', {'ExecuteTime': {'clear_timings_on_clear_output': True}})"
