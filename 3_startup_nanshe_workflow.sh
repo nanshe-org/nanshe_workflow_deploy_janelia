@@ -30,83 +30,10 @@
 # OF SUCH DAMAGE.
 
 
-# Unset XDG_RUNTIME_DIR as we lose write permission to this directory in `qsub`
-# and Jupyter wants to be able to write some files there if it is set.
-#
-# xref: https://github.com/jupyter/notebook/issues/1923
-#
-unset XDG_RUNTIME_DIR
-
-# Remove the config variables file at the beginning and the end.
-rm -f ~/ipython_notebook_config_vars
-trap "rm -f ~/ipython_notebook_config_vars" EXIT
-
-# Copy the notebook to the current work directory
-WORKFLOW="nanshe_ipython.ipynb"
-if [ ! -e $WORKFLOW ];
-then
-  cp -n ~/nanshe_workflow/$WORKFLOW ./$WORKFLOW
-fi
-
-# Launch the job and grab the output from launching it.
-CWD=$(pwd)
-if hash jupyter 2>/dev/null;
-then
-  $(cd ~ && splaunch jupyter notebook --no-browser --ip=* --notebook-dir=$CWD --port 9999 > ~/splaunch_startup_ipython_notebook.out 2> ~/splaunch_startup_ipython_notebook.err)
-else
-  $(cd ~ && splaunch ipython notebook --no-browser --ip=* --notebook-dir=$CWD --port 9999 > ~/splaunch_startup_ipython_notebook.out 2> ~/splaunch_startup_ipython_notebook.err)
-fi
-
-# Get the SGE job ID.
-QJOB_ID=$(cat ~/splaunch_startup_ipython_notebook.out | tr "\"" "\n" | tail -2 | head -1)
-
-# Remove the notebook when the script exits.
-trap "bkill $QJOB_ID" EXIT
-
-# Wait for the job to start.
-while [ "$(bjobs | grep "^\s*$QJOB_ID\s\+" | grep "\s\+RUN\s\+" | wc -l)" == "0" ];
-do
-  sleep 1
-done
-
-# Gets the queue that it is running on.
-QJOB_HOSTNAME=`bjobs -UF -X $QJOB_ID | tr ",;" "\n" | grep "on Host" | head -1 | sed 's/.*<\(.*\)>/\1/'`
-
-# Wait for the log file to get some content.
-QJOB_STDERR_PATH=~/$(bjobs -UF -X $QJOB_ID | tr ",;" "\n" | grep "Error File" | sed 's/.*<\(.*\)>/\1/')
-until [ -s $QJOB_STDERR_PATH ];
-do
-  sleep 1
-done
-
-# Gets the iPython Notebook port and token.
-IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
-while [ -z "${IPYTHON_INFO}" ] && [ $(bjobs -X $QJOB_ID | tail -1 | tr -s " " "\n" | head -3 | tail -1 | grep -v "RUN") ];
-do
-  sleep 1
-  IPYTHON_INFO=(`grep "http://\[all ip addresses on your system\]:" $QJOB_STDERR_PATH | tr ":" "\n" | tail -1 | sed -e "s/\///g" | tr "?=" "\n"`)
-done
-
-# Extract IPython info
-IPYTHON_PORT="${IPYTHON_INFO[0]}"
-IPYTHON_TOKEN="${IPYTHON_INFO[-1]}"
-if [ "${IPYTHON_PORT}" == "${IPYTHON_TOKEN}" ];
-then
-  unset IPYTHON_TOKEN
-fi
-
-# Get a port if one isn't provided.
-if [[ -z "${LOGIN_NODE_PORT}" ]];
-then
-  LOGIN_NODE_PORT=9999
-fi
-
-# Try to create a tunnel using each port available until one works.
-while [ true ];
-do
-  # Store the iPython config variables when we are ready for the connection. If it fails, up the port number on the login node.
-  echo -e "QJOB_ID=$QJOB_ID\nQJOB_HOSTNAME=$QJOB_HOSTNAME\nIPYTHON_PORT=$IPYTHON_PORT\nLOGIN_NODE_PORT=$LOGIN_NODE_PORT\nIPYTHON_TOKEN=$IPYTHON_TOKEN" > ~/ipython_notebook_config_vars
-  ssh -o ExitOnForwardFailure=yes -vnNTL $LOGIN_NODE_PORT:localhost:$IPYTHON_PORT $QJOB_HOSTNAME | cat
-  [[ $? -eq 0 ]] || break
-  ((LOGIN_NODE_PORT++))
-done
+##########################################################################
+# Startup the Singularity container with a couple of directories bound.  #
+#                                                                        #
+# * Binds `/misc` to get access to the cluster's DRMAA library install.  #
+# * Binds `/scratch` for node local write space used by Dask.            #
+##########################################################################
+singularity run -B /misc -B /scratch ~/nanshe_workflow.simg
