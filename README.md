@@ -15,35 +15,33 @@
 # Configure the cluster
 
 * Connect to the cluster `ssh login1.int.janelia.org`.
-* Run `qlogin`.
+* Run `bsub -Is -tty /bin/bash`.
 * Run our configuration file `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash`.
-* Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash' | qsub`. Check to make sure it is done by running `qstat` and verifying `STDIN` is no longer in the job list returned.
+* Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash' | bsub`. Check to make sure it is done by running `bjobs` and verifying `STDIN` is no longer in the job list returned.
+* Logout of the cluster. All changes will take effect on the next login.
 
 # Installing/Updating
 
-* Connect to the cluster `ssh login1.int.janelia.org` if you aren't already.
-* Run this `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash`.
-* Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash' | qsub`. Check to make sure it is done by running `qstat` and verifying `STDIN` is no longer in the job list returned.
+* Connect to the cluster `ssh login1.int.janelia.org`.
+* Run this `singularity build ~/nanshe_workflow.simg docker://nanshe/nanshe_workflow`.
+* Alternatively, this can be run in the background with `bsub singularity build ~/nanshe_workflow.simg docker://nanshe/nanshe_workflow`. Check to make sure it is done by running `bjobs` and verifying the job is no longer in the list returned.
 * If this fails for any reason, try opening GitHub Desktop. Once it is fully loaded close it. Then, open a new Terminal or Git Bash (GitHub). Finally, rerun these steps.
-* Logout of the cluster. All changes will take effect on the next login.
 
 # Running
 
 * Connect to the cluster `ssh login1.int.janelia.org`.
 * Switch to a directory with data using `cd`.
-* Run the following `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/3_startup_nanshe_workflow.sh | bash`
+* Run `bsub -Is -tty /bin/bash` and then run `singularity run --bind /misc --bind /scratch ~/nanshe_workflow.simg`.
+* Alternatively run the `bsub singularity run --bind /misc --bind /scratch ~/nanshe_workflow.simg` and then wait a little and run `bpeek`.
 * It will take a little bit to start then it will print a bunch of stuff to the screen and hang (this is intentional).
-* Open a new terminal, and run the following `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/4_connect_nanshe_workflow.sh > 4_connect_nanshe_workflow.sh && bash 4_connect_nanshe_workflow.sh ; rm 4_connect_nanshe_workflow.sh`. It will prompt you for your password twice and hang (this is intentional).
-* Open <http://127.0.0.1:8888> in your browser.
+* Copy the URL from the output (removing `(`/`)` and ` or 127.0.0.1` from it) and enter this into your browser.
 * Select `nanshe_ipython.ipynb`.
-* Find the cell with `os.environ["CORES"]` and comment that line and add a line like this `os.environ["CORES"] = "8"` below it. Replace `8` with the number of cores desired to run.
 
 # Shutting down
 
 * Save and close your notebook.
-* Terminate both `ssh` processes by pressing `Ctrl+c` in each terminal.
-* Get on the cluster `ssh login1.int.janelia.org` and make sure there are no remaining jobs `qstat`.
-* Clean any remaining jobs with `qdel`.
+* Use `Ctrl+c` back to the login node.
+* Run `bjobs` and terminate any remaining jobs with `bkill`.
 
 # Security
 

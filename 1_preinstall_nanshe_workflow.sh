@@ -30,52 +30,6 @@
 # OF SUCH DAMAGE.
 
 
-# Download and install conda.
-rm -rf ~/miniconda
-curl -L https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh > ~/miniconda.sh
-bash ~/miniconda.sh -b -p ~/miniconda
-rm -f ~/miniconda.sh
-
-# Fix up the environment.
-source ~/miniconda/bin/activate root
-
-# Pin packages that need pinning.
-rm -f ~/miniconda/conda-meta/pinned
-touch ~/miniconda/conda-meta/pinned
-
-# Add channels.
-conda config --add channels conda-forge
-conda config --add channels nanshe
-
-# Update, install some needed tools, and cleanup.
-conda update -y --all
-conda install -y conda-build
-conda install -y anaconda-client
-conda install -y jinja2
-
-# Create an environment for the workflow.
-conda remove -y -n nanshenv --all
-conda create -y -n nanshenv python
-conda install -y -n nanshenv nanshe
-
-# Install some other dependencies that will be needed.
-conda install -y -n nanshenv drmaa splauncher
-conda install -y -n nanshenv ipython notebook
-
-# Clean after all installs.
-conda clean -yitps
-
-# Setup iPython profiles for cluster usage.
-rm -f ~/.ipython/profile_default/ipcluster_config.py
-~/miniconda/envs/nanshenv/bin/ipython profile create --parallel
-echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '\*'\nc.HubFactory.engine_ip = '\*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_default/ipcluster_config.py
-rm -f ~/.ipython/profile_sge/ipcluster_config.py
-~/miniconda/envs/nanshenv/bin/ipython profile create --parallel --profile=sge
-echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterStart.controller_launcher_class = \"SGE\"\nc.IPClusterEngines.engine_launcher_class = \"SGE\"\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '*'\nc.HubFactory.engine_ip = '*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_sge/ipcluster_config.py
-rm -f ~/.ipython/profile_lsf/ipcluster_config.py
-~/miniconda/envs/nanshenv/bin/ipython profile create --parallel --profile=lsf
-echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterStart.controller_launcher_class = \"LSF\"\nc.IPClusterEngines.engine_launcher_class = \"LSF\"\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '*'\nc.HubFactory.engine_ip = '*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_lsf/ipcluster_config.py
-
 # Fix up the bash profile.
 touch ~/.bash_profile
 if ! $(grep -q "source ~/.nanshe_workflow.sh" ~/.bash_profile);
