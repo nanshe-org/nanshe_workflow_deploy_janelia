@@ -23,8 +23,8 @@
 # Installing/Updating
 
 * Connect to the cluster `ssh login1.int.janelia.org`.
-* Run this `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash`.
-* Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash' | bsub`. Check to make sure it is done by running `bjobs` and verifying `STDIN` is no longer in the job list returned.
+* Run this `singularity build ~/nanshe_workflow.simg docker://nanshe/nanshe_workflow`.
+* Alternatively, this can be run in the background with `bsub singularity build ~/nanshe_workflow.simg docker://nanshe/nanshe_workflow`. Check to make sure it is done by running `bjobs` and verifying the job is no longer in the list returned.
 * If this fails for any reason, try opening GitHub Desktop. Once it is fully loaded close it. Then, open a new Terminal or Git Bash (GitHub). Finally, rerun these steps.
 
 # Running
