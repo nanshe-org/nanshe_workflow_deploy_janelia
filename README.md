@@ -15,7 +15,7 @@
 # Configure the cluster
 
 * Connect to the cluster `ssh login1.int.janelia.org`.
-* Run `qlogin`.
+* Run `bsub -Is -tty /bin/bash`.
 * Run our configuration file `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash`.
 * Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash' | qsub`. Check to make sure it is done by running `qstat` and verifying `STDIN` is no longer in the job list returned.
 
