@@ -18,14 +18,14 @@
 * Run `bsub -Is -tty /bin/bash`.
 * Run our configuration file `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash`.
 * Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/1_preinstall_nanshe_workflow.sh | bash' | bsub`. Check to make sure it is done by running `bjobs` and verifying `STDIN` is no longer in the job list returned.
+* Logout of the cluster. All changes will take effect on the next login.
 
 # Installing/Updating
 
-* Connect to the cluster `ssh login1.int.janelia.org` if you aren't already.
+* Connect to the cluster `ssh login1.int.janelia.org`.
 * Run this `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash`.
 * Alternatively, this can be run in the background `echo 'curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/2_update_nanshe_workflow.sh | bash' | bsub`. Check to make sure it is done by running `bjobs` and verifying `STDIN` is no longer in the job list returned.
 * If this fails for any reason, try opening GitHub Desktop. Once it is fully loaded close it. Then, open a new Terminal or Git Bash (GitHub). Finally, rerun these steps.
-* Logout of the cluster. All changes will take effect on the next login.
 
 # Running
 
