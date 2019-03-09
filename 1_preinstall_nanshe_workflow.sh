@@ -77,13 +77,3 @@ echo "# This simply follows the recommendation of our cluster admins" >> ~/.nans
 echo "# to redirect this to a different location than XDG_RUNTIME_DIR." >> ~/.nanshe_workflow.sh
 echo "# This is just what Jupyter picks when XDG_RUNTIME_DIR is disabled." >> ~/.nanshe_workflow.sh
 echo "export JUPYTER_RUNTIME_DIR=\$HOME/.local/share/jupyter/runtime" >> ~/.nanshe_workflow.sh
-echo "" >> ~/.nanshe_workflow.sh
-echo "# Add miniconda root to the path" >> ~/.nanshe_workflow.sh
-echo "PATH=\$HOME/miniconda/bin:\$PATH" >> ~/.nanshe_workflow.sh
-echo "" >> ~/.nanshe_workflow.sh
-echo "# Activate the nanshe environment at login" >> ~/.nanshe_workflow.sh
-echo "# Normally would do \`source activate nanshenv\` however this messes up NoMachine" >> ~/.nanshe_workflow.sh
-echo "export CONDA_DEFAULT_ENV=nanshenv" >> ~/.nanshe_workflow.sh
-echo "export CONDA_ENV_PATH=\$HOME/miniconda/envs/\$CONDA_DEFAULT_ENV" >> ~/.nanshe_workflow.sh
-echo "export PATH=\$CONDA_ENV_PATH/bin:\$PATH" >> ~/.nanshe_workflow.sh
-echo "#export PS1=(\$CONDA_DEFAULT_ENV)\$PS1" >> ~/.nanshe_workflow.sh
