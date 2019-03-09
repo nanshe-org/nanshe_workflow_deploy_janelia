@@ -40,9 +40,8 @@
 # Shutting down
 
 * Save and close your notebook.
-* Terminate both `ssh` processes by pressing `Ctrl+c` in each terminal.
-* Get on the cluster `ssh login1.int.janelia.org` and make sure there are no remaining jobs `bjobs`.
-* Clean any remaining jobs with `bkill`.
+* Use `Ctrl+c` back to the login node.
+* Run `bjobs` and terminate any remaining jobs with `bkill`.
 
 # Security
 
