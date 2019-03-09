@@ -34,8 +34,7 @@
 * Run `bsub -Is -tty /bin/bash` and then run `singularity run --bind /misc --bind /scratch ~/nanshe_workflow.simg`.
 * Alternatively run the `bsub singularity run --bind /misc --bind /scratch ~/nanshe_workflow.simg` and then wait a little and run `bpeek`.
 * It will take a little bit to start then it will print a bunch of stuff to the screen and hang (this is intentional).
-* Open a new terminal, and run the following `curl https://raw.githubusercontent.com/nanshe-org/nanshe_workflow_deploy_janelia/master/4_connect_nanshe_workflow.sh > 4_connect_nanshe_workflow.sh && bash 4_connect_nanshe_workflow.sh ; rm 4_connect_nanshe_workflow.sh`. It will prompt you for your password twice and hang (this is intentional).
-* Open <http://127.0.0.1:8888> in your browser.
+* Copy the URL from the output (removing `(`/`)` and ` or 127.0.0.1` from it) and enter this into your browser.
 * Select `nanshe_ipython.ipynb`.
 * Find the cell with `os.environ["CORES"]` and comment that line and add a line like this `os.environ["CORES"] = "8"` below it. Replace `8` with the number of cores desired to run.
 
