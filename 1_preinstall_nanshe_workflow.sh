@@ -77,6 +77,7 @@ rm -f ~/.ipython/profile_lsf/ipcluster_config.py
 echo -e "import os\n\n\nc = get_config()\n\nc.IPClusterStart.controller_launcher_class = \"LSF\"\nc.IPClusterEngines.engine_launcher_class = \"LSF\"\nc.IPClusterEngines.n = int(os.environ[\"CORES\"]) - 1\n\nc.HubFactory.ip = '*'\nc.HubFactory.engine_ip = '*'\nc.HubFactory.db_class = \"SQLiteDB\"\n\nc.IPEngineApp.wait_for_url_file = 60\nc.EngineFactory.timeout = 60" > ~/.ipython/profile_lsf/ipcluster_config.py
 
 # Fix up the bash profile.
+touch ~/.bash_profile
 if ! $(grep -q "source ~/.nanshe_workflow.sh" ~/.bash_profile);
 then
   echo "" >> ~/.bash_profile
