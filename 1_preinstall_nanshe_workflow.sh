@@ -65,10 +65,4 @@ if [[ -f /misc/lsf/conf/profile.lsf ]]; then
     export LSF_DRMAA_LIBRARY_PATH="/misc/sc/lsf-glibc2.3/lib/libdrmaa.so.0.1.1"
     export DRMAA_LIBRARY_PATH="$LSF_DRMAA_LIBRARY_PATH"
 fi
-
-# Set the Jupyter runtime directory in the user's home.
-# This simply follows the recommendation of our cluster admins
-# to redirect this to a different location than XDG_RUNTIME_DIR.
-# This is just what Jupyter picks when XDG_RUNTIME_DIR is disabled.
-export JUPYTER_RUNTIME_DIR="$HOME/.local/share/jupyter/runtime"
 EOF
